@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="bgraphics.min.js"></script>
+    </head>
+    <body>
+        <div id="container" style="position:relative">
+            <img src="img/Shoes.gif" width="" height="" alt="" usemap="#mymap" id="mygraphic">
+
+            <map name="mymap">
+                <area shape="circle" coords="321,206,10" data-value="1" data-function="answer">
+                <area shape="circle" coords="321,245,10" data-value="2" data-function="answer">
+                <area shape="circle" coords="321,284,10" data-value="3" data-function="answer">
+                <area shape="circle" coords="321,323,10" data-value="3" data-function="answer">
+                <area shape="rect" coords="440,350,560,385" data-value="3" data-function="next">
+            </map>
+            <map name="myending">
+                <area shape="rect" coords="440,350,560,385" data-value="3" data-function="next">
+            </map>
+            <div id="highlighter" style="background-color:#000000; width:19px; height:19px;border-radius:10px;position:absolute;left;top;display:none"></div>
+        </div>
+        <script>
+            new bGraphics({
+                "selector": "#mygraphic", //css selector for the <img>
+                "questionMap": "mymap", //map [name] 
+                "endMap": "myending",
+                "highlighter": "#highlighter", // css selector for the highlighter element
+                "questions": [ //array of question img urls in order of use
+                    "img/Shoes.gif",
+                    "img/Waiter.gif",
+                ],
+                "answers": [ //array of answer img urls in order of result
+                    "img/VigorBlend.gif",
+                    "img/QualityBlend.gif"
+                ],
+            });
+        </script>
+
+    </body>
+</html>

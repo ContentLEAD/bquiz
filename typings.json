@@ -1,0 +1,11 @@
+{
+  "globalDevDependencies": {
+    "jquery": "registry:dt/jquery#1.10.0+20160908203239"
+  },
+  "files":[
+    "typings/index.d.ts"
+  ],
+  "compilerOptions":{
+    "removeComments": true
+  }
+}
