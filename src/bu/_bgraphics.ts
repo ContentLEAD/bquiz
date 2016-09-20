@@ -1,7 +1,6 @@
 /// <reference path="./_preloader.ts"/>
 /// <reference path="./_map.ts"/>
 /// <reference path="../../typings/index.d.ts"/>
-/// <reference path="./_tracking.ts"/>
 module bGraphics{
         export var imageContainer, //jquery object for the source img
         graphicInformation,
@@ -17,8 +16,7 @@ module bGraphics{
         highlighter,
         startMap,
         endMap,
-        mapElements = [],
-        track;
+        mapElements = [];
 
         export function init(options){
             console.log(options);
@@ -29,10 +27,6 @@ module bGraphics{
             this.questionsTotal = this.questions.length;
             this.imageContainer = jQuery(selector);
             this.setInfo(selector);
-            this.track = new googleAnalyticsTracking({
-                title: this.graphicInformation.title,
-                category: "Interactive Graphic Quiz"
-            });
             if(startMap){ //will provide ability to have a starting map 
                 this.startMap = new map(startMap);
                 this.registerMap(this.startMap);
@@ -68,6 +62,21 @@ module bGraphics{
                 console.log(action);
                 jQuery(area.element).click(area.data, this[area.data.action]);
             })
+            /*
+            this.imageMap.questionAreas.forEach(question => {
+                console.log(question);
+            question.data.quizRef = this;
+                jQuery(question.element).click(question.data, this.registerAnswer);
+            });
+            
+            this.imageMap.continueArea.forEach(cont => {
+                jQuery(cont.element).click({"quizRef": this}, this.next);
+            });
+            this.imageMap.swap.forEach(swap => {
+                swap.data.quizRef = this;
+                jQuery(swap.element).click(swap.data, this.swap);
+            })
+            */
         };
 
         export function setInfo(img){
@@ -84,6 +93,64 @@ module bGraphics{
             if(!this.graphicInformation.title){
                 console.warn("Your graphic does not have a title.  Analytics event tracking will be disabled");
             }
+        };
+        export function answer(event){
+            console.log("answer event");
+            var {shape, coords, value, id, quizRef} = event.data;
+
+            quizRef.currentValue = value;
+            
+            //Something to move the "selected div" over the coords
+            console.log("moving selector over coord areas" + coords);
+            let cord = coords.split(",").map(x => Number(x));
+            let top, left;
+            if(shape == "circle"){
+                left = (cord[0] - cord[2])+"px";
+                top = (cord[1] - cord[2])+"px";
+            }else if(shape == 'rect'){
+                left = cord[0]+"px";
+                top = cord[0]+"px";
+                
+            }
+            quizRef.highlighter.css({
+                    top: top,
+                    left: left,
+                    display: "block"
+                });
+            //current question has been answered
+            quizRef.currentQuestionAnswered = true;
+        };
+        export function swap(event){
+            console.log("swap event");
+            var {quizRef} = event.data;
+
+        };
+        export function next(event){
+            console.log("next event");
+            var {quizRef} = event.data;
+            if(!quizRef.currentQuestionAnswered){
+                alert("You have not yet provided an answer to the current question.");
+                return;
+            }
+            quizRef.highlighter.css({
+                display: "none"
+            });
+            console.log("moving on...");
+            ++quizRef.currentQuestion;
+
+            quizRef.accumulatedValue += Number(quizRef.currentValue);
+            quizRef.currentValue = null;
+            console.log(quizRef.currentQuestion, quizRef.questionsTotal);
+            if(quizRef.currentQuestion == quizRef.questionsTotal){
+                quizRef.calculateTotal();
+            }else{
+                quizRef.imageContainer.attr("src", quizRef.questions[quizRef.currentQuestion]);
+
+            }
+
+
+            //reset current question answered to false
+            quizRef.currentQuestionAnswered = false;
         };
 
         export function calculateTotal(){
@@ -104,7 +171,6 @@ module bGraphics{
             if(this.endMap){
                 this.imageContainer.attr("usemap", "#"+this.mapElements["endmap"]);
             }
-            this.tracking.finished();
         };
 
     

@@ -2,8 +2,9 @@
 <html>
     <head>
         <title></title>
+        
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <script src="bgraphics.min.js"></script>
+        <script src="js/bgraphics.js"></script>
     </head>
     <body>
         <div id="container" style="position:relative">
@@ -22,7 +23,7 @@
             <div id="highlighter" style="background-color:#000000; width:19px; height:19px;border-radius:10px;position:absolute;left;top;display:none"></div>
         </div>
         <script>
-            new bGraphics({
+           bGraphics.init({
                 "selector": "#mygraphic", //css selector for the <img>
                 "questionMap": "mymap", //map [name] 
                 "endMap": "myending",

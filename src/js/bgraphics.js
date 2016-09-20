@@ -1,5 +1,64 @@
 var bGraphics;
 (function (bGraphics) {
+    function answer(event) {
+        console.log("answer event");
+        var _a = event.data, shape = _a.shape, coords = _a.coords, value = _a.value, id = _a.id, quizRef = _a.quizRef;
+        quizRef.currentValue = value;
+        console.log("moving selector over coord areas" + coords);
+        var cord = coords.split(",").map(function (x) { return Number(x); });
+        var top, left;
+        if (shape == "circle") {
+            left = (cord[0] - cord[2]) + "px";
+            top = (cord[1] - cord[2]) + "px";
+        }
+        else if (shape == 'rect') {
+            left = cord[0] + "px";
+            top = cord[0] + "px";
+        }
+        quizRef.highlighter.css({
+            top: top,
+            left: left,
+            display: "block"
+        });
+        quizRef.currentQuestionAnswered = true;
+    }
+    bGraphics.answer = answer;
+    ;
+    function swap(event) {
+        console.log("swap event");
+        var quizRef = event.data.quizRef;
+    }
+    bGraphics.swap = swap;
+    ;
+    function next(event) {
+        console.log("next event");
+        var quizRef = event.data.quizRef;
+        if (!quizRef.currentQuestionAnswered) {
+            alert("You have not yet provided an answer to the current question.");
+            return;
+        }
+        quizRef.highlighter.css({
+            display: "none"
+        });
+        console.log("moving on...");
+        ++quizRef.currentQuestion;
+        quizRef.accumulatedValue += Number(quizRef.currentValue);
+        quizRef.currentValue = null;
+        console.log(quizRef.currentQuestion, quizRef.questionsTotal);
+        if (quizRef.currentQuestion == quizRef.questionsTotal) {
+            quizRef.calculateTotal();
+        }
+        else {
+            quizRef.imageContainer.attr("src", quizRef.questions[quizRef.currentQuestion]);
+        }
+        quizRef.currentQuestionAnswered = false;
+        quizRef.tracking.next();
+    }
+    bGraphics.next = next;
+    ;
+})(bGraphics || (bGraphics = {}));
+//# sourceMappingURL=_actions.js.map;var bGraphics;
+(function (bGraphics) {
     var arch = (function () {
         function arch() {
         }
@@ -10,6 +69,7 @@ var bGraphics;
 //# sourceMappingURL=_arch.js.map;/// <reference path="./_preloader.ts"/>
 /// <reference path="./_map.ts"/>
 /// <reference path="../../typings/index.d.ts"/>
+/// <reference path="./_tracking.ts"/>
 var bGraphics;
 (function (bGraphics) {
     bGraphics.accumulatedValue = 0, bGraphics.currentQuestion = 0, bGraphics.currentQuestionAnswered = false, bGraphics.currentValue = null, bGraphics.mapElements = [];
@@ -22,6 +82,10 @@ var bGraphics;
         this.questionsTotal = this.questions.length;
         this.imageContainer = jQuery(selector);
         this.setInfo(selector);
+        this.track = new bGraphics.googleAnalyticsTracking({
+            title: this.graphicInformation.title,
+            category: "Interactive Graphic Quiz"
+        });
         if (startMap) {
             this.startMap = new bGraphics.map(startMap);
             this.registerMap(this.startMap);
@@ -82,61 +146,6 @@ var bGraphics;
     }
     bGraphics.setInfo = setInfo;
     ;
-    function answer(event) {
-        console.log("answer event");
-        var _a = event.data, shape = _a.shape, coords = _a.coords, value = _a.value, id = _a.id, quizRef = _a.quizRef;
-        quizRef.currentValue = value;
-        console.log("moving selector over coord areas" + coords);
-        var cord = coords.split(",").map(function (x) { return Number(x); });
-        var top, left;
-        if (shape == "circle") {
-            left = (cord[0] - cord[2]) + "px";
-            top = (cord[1] - cord[2]) + "px";
-        }
-        else if (shape == 'rect') {
-            left = cord[0] + "px";
-            top = cord[0] + "px";
-        }
-        quizRef.highlighter.css({
-            top: top,
-            left: left,
-            display: "block"
-        });
-        quizRef.currentQuestionAnswered = true;
-    }
-    bGraphics.answer = answer;
-    ;
-    function swap(event) {
-        console.log("swap event");
-        var quizRef = event.data.quizRef;
-    }
-    bGraphics.swap = swap;
-    ;
-    function next(event) {
-        console.log("next event");
-        var quizRef = event.data.quizRef;
-        if (!quizRef.currentQuestionAnswered) {
-            alert("You have not yet provided an answer to the current question.");
-            return;
-        }
-        quizRef.highlighter.css({
-            display: "none"
-        });
-        console.log("moving on...");
-        ++quizRef.currentQuestion;
-        quizRef.accumulatedValue += Number(quizRef.currentValue);
-        quizRef.currentValue = null;
-        console.log(quizRef.currentQuestion, quizRef.questionsTotal);
-        if (quizRef.currentQuestion == quizRef.questionsTotal) {
-            quizRef.calculateTotal();
-        }
-        else {
-            quizRef.imageContainer.attr("src", quizRef.questions[quizRef.currentQuestion]);
-        }
-        quizRef.currentQuestionAnswered = false;
-    }
-    bGraphics.next = next;
-    ;
     function calculateTotal() {
         console.log("quiz all done");
         var res = (this.accumulatedValue / this.questionsTotal);
@@ -156,6 +165,7 @@ var bGraphics;
         if (this.endMap) {
             this.imageContainer.attr("usemap", "#" + this.mapElements["endmap"]);
         }
+        this.tracking.finished();
     }
     bGraphics.resolveAnswer = resolveAnswer;
     ;
@@ -218,12 +228,15 @@ var bGraphics;
 (function (bGraphics) {
     var googleAnalyticsTracking = (function () {
         function googleAnalyticsTracking(obj) {
-            this.category = "Interactive Graphic";
+            this.category = obj.category;
             this.label = obj.title;
             this._analytics = window["_gaq"] || null;
             this._ga = window["ga"] || null;
+            console.log(this._analytics);
+            console.log(this._ga);
         }
         googleAnalyticsTracking.prototype.next = function (val) {
+            if (val === void 0) { val = ""; }
             if (this._ga) {
                 this._ga("send", "event", this.category, "next Question " + val, this.label);
             }
@@ -245,6 +258,19 @@ var bGraphics;
             }
             else if (this._analytics) {
                 this._analytics.push(['_trackEvent', this.category, "Call to Action", this.label]);
+            }
+        };
+        googleAnalyticsTracking.prototype.custom = function (action, category, label) {
+            if (category === void 0) { category = this.category; }
+            if (label === void 0) { label = this.label; }
+            if (!action) {
+                console.warn("You have not provided an action for tracking");
+            }
+            if (this._ga) {
+                this._ga("send", "event", category, action, label);
+            }
+            else if (this._analytics) {
+                this._analytics.push(['_trackEvent', category, action, label]);
             }
         };
         return googleAnalyticsTracking;

@@ -6,12 +6,13 @@ module.exports = function(grunt) {
     typescript: {
         base: {
             src: ['src/ts/**/*.ts'],
-            dest: 'src/js',
+            dest: 'src/partials',
             options: {
                 module: 'amd', //or commonjs 
                 target: 'es5',
                 removeComments: true,
-                comments: false
+                comments: false,
+                sourceMap: true
             }
         }
     },
@@ -19,18 +20,18 @@ module.exports = function(grunt) {
         options: {
             separator: ';',
         },
-        dist: {
-            src: ['src/js/*.js'],
-            dest: 'src/bgraphics.js',
-        },
+        basic: {
+            src: ['src/partials/*.js'],
+            dest: 'src/js/bgraphics.js',
+        }
     },
     uglify: {
       options: {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
       },
       build: {
-        src: 'src/bgraphics.js',
-        dest: 'build/bgraphics.min.js'
+        src: 'src/js/bgraphics.js',
+        dest: 'src/js/bgraphics.min.js'
       }
     },
     copy: {
@@ -38,7 +39,6 @@ module.exports = function(grunt) {
             files: [
             // includes files within path and its sub-directories
             {expand: true ,cwd: "src/js", src: ['**'], dest: 'build/js/'},
-
             ],
         },
     },
