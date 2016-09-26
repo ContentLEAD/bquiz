@@ -1,5 +1,10 @@
 var bGraphics;
 (function (bGraphics) {
+    function begin(event) {
+        console.log("starting quiz");
+        var quizRef = event.data.quizRef;
+    }
+    bGraphics.begin = begin;
     function answer(event) {
         console.log("answer event");
         var _a = event.data, shape = _a.shape, coords = _a.coords, value = _a.value, id = _a.id, quizRef = _a.quizRef;
@@ -43,18 +48,44 @@ var bGraphics;
         console.log("moving on...");
         ++quizRef.currentQuestion;
         quizRef.accumulatedValue += Number(quizRef.currentValue);
+        quizRef.answerKeeper.push(quizRef.currentValue);
         quizRef.currentValue = null;
         console.log(quizRef.currentQuestion, quizRef.questionsTotal);
         if (quizRef.currentQuestion == quizRef.questionsTotal) {
             quizRef.calculateTotal();
+            return;
         }
         else {
             quizRef.imageContainer.attr("src", quizRef.questions[quizRef.currentQuestion]);
         }
         quizRef.currentQuestionAnswered = false;
-        quizRef.tracking.next();
+        quizRef.track.next();
     }
     bGraphics.next = next;
     ;
+    function arch(event) {
+        console.log("Arch Popup");
+        var quizRef = event.data.quizRef;
+        quizRef.marpro.cta();
+    }
+    bGraphics.arch = arch;
+    function learnMore(event) {
+        var quizRef = event.data.quizRef;
+        console.log(event);
+        quizRef.track.custom("Url direct");
+    }
+    bGraphics.learnMore = learnMore;
+    function remotePost(event) {
+        var quizRef = event.data.quizRef;
+        var remoteUrl = quizRef.options.remotePostUrl;
+        var answerArray = quizRef.answerKeeper;
+        var callback = quizRef.options.remoteCallback ? quizRef.options.remoteCallback : function (data) {
+            console.log(data);
+        };
+        jQuery.post(remoteUrl, {
+            answers: answerArray
+        }, callback);
+    }
+    bGraphics.remotePost = remotePost;
 })(bGraphics || (bGraphics = {}));
 //# sourceMappingURL=_actions.js.map

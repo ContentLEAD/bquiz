@@ -42,15 +42,28 @@ module.exports = function(grunt) {
             ],
         },
     },
+    watch:{
+        files: "src/ts/*.ts",
+        tasks: ['full']
+    },
+    serve: {
+        options: {
+            port: 9000
+        }
+    }
   });
   
   grunt.loadNpmTasks('grunt-typescript');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-copy');
-
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-serve');
   
   // Default task(s).
+  grunt.registerTask('livedev', ['serve', 'watch']);
   grunt.registerTask('full', ['typescript','concat','uglify', 'copy']);
     grunt.registerTask('default', ['typescript','concat','uglify']);
+    
+    
 };

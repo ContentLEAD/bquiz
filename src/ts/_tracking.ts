@@ -10,11 +10,10 @@ module bGraphics{
             this.label = obj.title;
             this._analytics = window["_gaq"] || null;
             this._ga = window["ga"] || null;
-            console.log(this._analytics);
-            console.log(this._ga);
         }
 
         next(val = ""){
+            console.log("tracking next");
             if(this._ga){
                 this._ga("send", "event", this.category, "next Question "+val, this.label)
             }else if(this._analytics){
@@ -23,6 +22,7 @@ module bGraphics{
         }
 
         finished(){
+            console.log("tracking finished");
             if(this._ga){
                this._ga("send", "event", this.category, "Quiz completed", this.label)
             }else if(this._analytics){
@@ -31,6 +31,7 @@ module bGraphics{
         }
 
         cta(){
+            console.log("tracking cta click");
             if(this._ga){
                 this._ga("send", "event", this.category, "Call to Action", this.label)
             }else if(this._analytics){
@@ -38,6 +39,7 @@ module bGraphics{
             }
         }
         custom(action, category = this.category, label = this.label){
+            console.log("track custom event");
             if(!action){
                 console.warn("You have not provided an action for tracking");
             }

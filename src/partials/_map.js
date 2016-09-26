@@ -3,12 +3,12 @@ var bGraphics;
 (function (bGraphics) {
     var map = (function () {
         function map(selector) {
-            console.log(selector);
-            console.log("new Area Map being generated");
+            this.name = selector;
             this.mapElement = jQuery("map[name='" + selector + "'");
-            this.questionAreas = this.buildArea(jQuery(this.mapElement).children("area[data-function='answer']").toArray());
-            this.swap = this.buildArea(jQuery(this.mapElement).children("area[data-function='swap']").toArray());
-            this.continueArea = this.buildArea(jQuery(this.mapElement).children("area[data-function='next']").toArray());
+            var questions = this.mapElement.attr("data-questions");
+            if (questions) {
+                this.forQuestions = questions.split(",").map(function (x) { return Number(x); });
+            }
             this.areas = this.buildArea(jQuery(this.mapElement).children("area").toArray());
         }
         map.prototype.buildArea = function (areas) {
@@ -24,7 +24,6 @@ var bGraphics;
                     }
                 };
             });
-            console.log(tmp);
             return tmp;
         };
         return map;

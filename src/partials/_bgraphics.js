@@ -2,48 +2,75 @@
 /// <reference path="./_map.ts"/>
 /// <reference path="../../typings/index.d.ts"/>
 /// <reference path="./_tracking.ts"/>
+/// <reference path="./_arch.ts"/>
 var bGraphics;
 (function (bGraphics) {
-    bGraphics.accumulatedValue = 0, bGraphics.currentQuestion = 0, bGraphics.currentQuestionAnswered = false, bGraphics.currentValue = null, bGraphics.mapElements = [];
+    bGraphics.accumulatedValue = 0, bGraphics.currentQuestion = 0, bGraphics.currentQuestionAnswered = false, bGraphics.currentValue = null, bGraphics.mapElements = [], bGraphics.answerKeeper = [];
     function init(options) {
+        var _this = this;
+        try {
+            jQuery(function () { return _this.documentReady(options); });
+        }
+        catch (e) {
+            if (e.message == "jQuery is not defined") {
+                console.warn(e.message + " and is required for bGraphics");
+            }
+            else {
+                console.log(e.message);
+            }
+        }
+    }
+    bGraphics.init = init;
+    ;
+    function documentReady(options) {
         console.log(options);
-        var _a = this.options = options, questions = _a.questions, answers = _a.answers, selector = _a.selector, questionMap = _a.questionMap, startMap = _a.startMap, endMap = _a.endMap, highlighter = _a.highlighter;
+        var _a = this.options = options, questions = _a.questions, answers = _a.answers, selector = _a.selector, questionMap = _a.questionMap, startMap = _a.startMap, endMap = _a.endMap, highlighter = _a.highlighter, arch = _a.arch;
         this.questions = new bGraphics.preloader(questions);
         this.answers = new bGraphics.preloader(answers);
         this.highlighter = jQuery(highlighter);
         this.questionsTotal = this.questions.length;
         this.imageContainer = jQuery(selector);
         this.setInfo(selector);
+        if (arch) {
+            this.marpro = new bGraphics.archForm({
+                brand: arch.brand,
+                formId: arch.formId,
+                feedId: arch.id,
+            });
+        }
         this.track = new bGraphics.googleAnalyticsTracking({
             title: this.graphicInformation.title,
             category: "Interactive Graphic Quiz"
         });
         if (startMap) {
             this.startMap = new bGraphics.map(startMap);
-            this.registerMap(this.startMap);
+            this.registerMap(this.startMap, "start");
         }
         if (typeof questionMap == 'Array') {
             for (var _i = 0; _i < questionMap.length; _i++) {
                 var map_1 = questionMap[_i];
                 var tMap = new map_1(map_1);
-                this.registerMap(tMap);
+                this.registerMap(tMap, "question");
             }
         }
         else {
             this.imageMap = new bGraphics.map(questionMap);
-            this.registerMap(this.imageMap);
+            this.registerMap(this.imageMap, "question");
         }
         if (endMap) {
             this.endMap = new bGraphics.map(endMap);
-            this.registerMap(endMap);
+            this.registerMap(this.endMap, "end");
         }
         this.initializeQuiz();
+        console.log(this);
     }
-    bGraphics.init = init;
-    ;
-    function registerMap(map) {
-        console.log("adding a new map");
-        this.mapElements.push(map);
+    bGraphics.documentReady = documentReady;
+    function registerMap(map, type) {
+        console.log("registering a " + type + " map", map);
+        if (!this.mapElements[type]) {
+            this.mapElements[type] = [];
+        }
+        this.mapElements[type].push(map);
         console.log(this.mapElements);
     }
     bGraphics.registerMap = registerMap;
@@ -95,9 +122,9 @@ var bGraphics;
             this.imageContainer.attr("src", this.answers[this.answers.length - 1]);
         }
         if (this.endMap) {
-            this.imageContainer.attr("usemap", "#" + this.mapElements["endmap"]);
+            this.imageContainer.attr("usemap", "#" + this.mapElements["end"][0].name);
         }
-        this.tracking.finished();
+        this.track.finished();
     }
     bGraphics.resolveAnswer = resolveAnswer;
     ;

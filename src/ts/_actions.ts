@@ -1,4 +1,8 @@
 module bGraphics{
+        export function begin(event){
+            console.log("starting quiz");
+            var {quizRef} = event.data;
+        }
        export function answer(event){
             console.log("answer event");
             var {shape, coords, value, id, quizRef} = event.data;
@@ -44,10 +48,13 @@ module bGraphics{
             ++quizRef.currentQuestion;
 
             quizRef.accumulatedValue += Number(quizRef.currentValue);
+            quizRef.answerKeeper.push(quizRef.currentValue);
+
             quizRef.currentValue = null;
             console.log(quizRef.currentQuestion, quizRef.questionsTotal);
             if(quizRef.currentQuestion == quizRef.questionsTotal){
                 quizRef.calculateTotal();
+                return;
             }else{
                 quizRef.imageContainer.attr("src", quizRef.questions[quizRef.currentQuestion]);
 
@@ -56,6 +63,27 @@ module bGraphics{
 
             //reset current question answered to false
             quizRef.currentQuestionAnswered = false;
-            quizRef.tracking.next();
+            quizRef.track.next();
         };
+        export function arch(event){
+            console.log("Arch Popup");
+            var {quizRef} = event.data;
+            quizRef.marpro.cta();
+        }
+        export function learnMore(event){
+            var {quizRef} = event.data;
+            console.log(event);
+            quizRef.track.custom("Url direct");
+        }
+        export function remotePost(event){
+            var {quizRef} = event.data;
+            var remoteUrl = quizRef.options.remotePostUrl; //url to send post data to
+            var answerArray = quizRef.answerKeeper;
+            var callback = quizRef.options.remoteCallback? quizRef.options.remoteCallback : function(data){
+                console.log(data);
+            };
+            jQuery.post(remoteUrl, {
+                answers: answerArray
+            },callback)
+        } 
 }

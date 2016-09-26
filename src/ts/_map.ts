@@ -3,17 +3,16 @@
 module bGraphics{
    export class map{
         public mapElement;
-        public questionAreas;
-        public continueArea;
-        public swap;
+        public forQuestions;
+        public name;
         public areas;
         constructor(selector){
-            console.log(selector);
-            console.log("new Area Map being generated");
+            this.name = selector;
             this.mapElement = jQuery("map[name='"+selector+"'");
-            this.questionAreas = this.buildArea(jQuery(this.mapElement).children("area[data-function='answer']").toArray());
-            this.swap = this.buildArea(jQuery(this.mapElement).children("area[data-function='swap']").toArray());
-            this.continueArea = this.buildArea(jQuery(this.mapElement).children("area[data-function='next']").toArray());
+            let questions = this.mapElement.attr("data-questions");
+            if(questions){
+                this.forQuestions = questions.split(",").map(x => Number(x));
+            }
             this.areas = this.buildArea(jQuery(this.mapElement).children("area").toArray());
         }
 
@@ -30,7 +29,7 @@ module bGraphics{
                     }
                 }
             });
-            console.log(tmp);
+            
             return tmp;
         }
 

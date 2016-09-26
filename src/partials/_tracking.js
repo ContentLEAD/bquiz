@@ -6,11 +6,10 @@ var bGraphics;
             this.label = obj.title;
             this._analytics = window["_gaq"] || null;
             this._ga = window["ga"] || null;
-            console.log(this._analytics);
-            console.log(this._ga);
         }
         googleAnalyticsTracking.prototype.next = function (val) {
             if (val === void 0) { val = ""; }
+            console.log("tracking next");
             if (this._ga) {
                 this._ga("send", "event", this.category, "next Question " + val, this.label);
             }
@@ -19,6 +18,7 @@ var bGraphics;
             }
         };
         googleAnalyticsTracking.prototype.finished = function () {
+            console.log("tracking finished");
             if (this._ga) {
                 this._ga("send", "event", this.category, "Quiz completed", this.label);
             }
@@ -27,6 +27,7 @@ var bGraphics;
             }
         };
         googleAnalyticsTracking.prototype.cta = function () {
+            console.log("tracking cta click");
             if (this._ga) {
                 this._ga("send", "event", this.category, "Call to Action", this.label);
             }
@@ -37,6 +38,7 @@ var bGraphics;
         googleAnalyticsTracking.prototype.custom = function (action, category, label) {
             if (category === void 0) { category = this.category; }
             if (label === void 0) { label = this.label; }
+            console.log("track custom event");
             if (!action) {
                 console.warn("You have not provided an action for tracking");
             }
