@@ -6,15 +6,15 @@ Version: 0.1.0
 This library is for building Brafton Interactive Graphics
 To begin learn how to work with the library see the README file in the "Build" Folder
 
-Requirements:
-    "grunt": "^1.0.1",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-copy": "^1.0.0",
-    "grunt-contrib-uglify": "^2.0.0",
-    "grunt-contrib-watch": "^1.0.0",
-    "grunt-serve": "^0.1.6",
-    "grunt-typescript": "^0.8.0",
-    "typings": "^1.3.3"
+Requirements:  
+    "grunt": "^1.0.1",  
+    "grunt-contrib-concat": "^1.0.1",  
+    "grunt-contrib-copy": "^1.0.0",  
+    "grunt-contrib-uglify": "^2.0.0",  
+    "grunt-contrib-watch": "^1.0.0",  
+    "grunt-serve": "^0.1.6",  
+    "grunt-typescript": "^0.8.0",  
+    "typings": "^1.3.3"  
 
 Install: 
 type `npm install` to install all node packages required
