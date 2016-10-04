@@ -68,31 +68,31 @@ bGraphics.bQuiz.init({
             });
 ~~~~
 
-selector (required)  <string>
-: jQuery selector for the <img> 
+selector (required)  `<string>`
+:  jQuery selector for the `<img>` 
 
-startMap (optional) <string>
-: The name of the staring image map if being used
+startMap (optional) `<string>`
+:  The name of the staring image map if being used
 
-questionMap (required) <string> || <array>
+questionMap (required) `<string> || <array>`
 : The name of the question image map.  This can be a string if only using one map or pass an array of strings if using multiple maps. 
 
-endMap (requried) <string>
+endMap (requried) `<string>`
 : the name of the ending image map.
 
-highlighter (required) <string>
+highlighter (required) `<string>`
 : the jquery selector for the element being used for highlighting the selected option for each question
 
-questions (required) <array>
+questions (required) `<array>`
 : the urls of the question images for preloading.  These images need to be in the order of the questions.
 
-answers (required) <array>
+answers (required) `<array>`
 : the urls of the answer images for preloading. These images need to be in order of the desired results.
 
-resultsUrls (optional) <array>
+resultsUrls (optional)  `<array>`
 : the urls desired for sharing based on the results.  These urls must be in the same order as the answers.
 
-arch (optional) <json object>
+arch (optional) `<json object>`
 : for use with Braftons arch CTA products.
 : id - Client Feed ID
 : brand - product (brafton, contentlead, castleford)
