@@ -19,7 +19,7 @@ Requirements:
 Install: 
 type `npm install` to install all node packages required
 
-commands:
+commands:  
 `grunt livedev` will run a test server "localhost:9000"
 after running grunt livedev hit `ctrl + C` to exit out of the server process and begin the watch process.
 Watch will watch all typescript files in src/ts for updates and compile in realtime.
@@ -34,7 +34,8 @@ typescript: comiple your typescript files from scr/ts/* to es5 in src/partials w
 concat: join all js files from src/partials into the src/js folder under bgraphics.js .
 uglify: will minimize and uglify the bgraphics.js file to bgraphics.min.js.
 
-Usage:
+Usage:  
+bGraphics requires jQuery  
 
 ~~~~
 bGraphics.bQuiz.init({
@@ -66,4 +67,34 @@ bGraphics.bQuiz.init({
                 }*/
             });
 ~~~~
-            
+
+selector (required)  <string>
+: jQuery selector for the <img> 
+
+startMap (optional) <string>
+: The name of the staring image map if being used
+
+questionMap (required) <string> || <array>
+: The name of the question image map.  This can be a string if only using one map or pass an array of strings if using multiple maps. 
+
+endMap (requried) <string>
+: the name of the ending image map.
+
+highlighter (required) <string>
+: the jquery selector for the element being used for highlighting the selected option for each question
+
+questions (required) <array>
+: the urls of the question images for preloading.  These images need to be in the order of the questions.
+
+answers (required) <array>
+: the urls of the answer images for preloading. These images need to be in order of the desired results.
+
+resultsUrls (optional) <array>
+: the urls desired for sharing based on the results.  These urls must be in the same order as the answers.
+
+arch (optional) <json object>
+: for use with Braftons arch CTA products.
+: id - Client Feed ID
+: brand - product (brafton, contentlead, castleford)
+: formId - Id of the pop up form being used.
+
