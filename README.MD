@@ -1,7 +1,7 @@
-Bgraphics Library
+## Bgraphics Library
 
-Author: Deryk w. King
-Version: 0.1.0
+#### Author: Deryk w. King
+#### Version: 0.1.0
 
 This library is for building Brafton Interactive Graphics
 To begin learn how to work with the library see the README file in the "Build" Folder
