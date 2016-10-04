@@ -1,92 +1,104 @@
 var bGraphics;
 (function (bGraphics) {
-    function begin(event) {
-        console.log("starting quiz");
-        var quizRef = event.data.quizRef;
-    }
-    bGraphics.begin = begin;
-    function answer(event) {
-        console.log("answer event");
-        var _a = event.data, shape = _a.shape, coords = _a.coords, value = _a.value, id = _a.id, quizRef = _a.quizRef;
-        quizRef.currentValue = value;
-        console.log("moving selector over coord areas" + coords);
-        var cord = coords.split(",").map(function (x) { return Number(x); });
-        var top, left;
-        if (shape == "circle") {
-            left = (cord[0] - cord[2]) + "px";
-            top = (cord[1] - cord[2]) + "px";
+    var acts = (function () {
+        function acts() {
         }
-        else if (shape == 'rect') {
-            left = cord[0] + "px";
-            top = cord[0] + "px";
-        }
-        quizRef.highlighter.css({
-            top: top,
-            left: left,
-            display: "block"
-        });
-        quizRef.currentQuestionAnswered = true;
-    }
-    bGraphics.answer = answer;
-    ;
-    function swap(event) {
-        console.log("swap event");
-        var quizRef = event.data.quizRef;
-    }
-    bGraphics.swap = swap;
-    ;
-    function next(event) {
-        console.log("next event");
-        var quizRef = event.data.quizRef;
-        if (!quizRef.currentQuestionAnswered) {
-            alert("You have not yet provided an answer to the current question.");
-            return;
-        }
-        quizRef.highlighter.css({
-            display: "none"
-        });
-        console.log("moving on...");
-        ++quizRef.currentQuestion;
-        quizRef.accumulatedValue += Number(quizRef.currentValue);
-        quizRef.answerKeeper.push(quizRef.currentValue);
-        quizRef.currentValue = null;
-        console.log(quizRef.currentQuestion, quizRef.questionsTotal);
-        if (quizRef.currentQuestion == quizRef.questionsTotal) {
-            quizRef.calculateTotal();
-            return;
-        }
-        else {
-            quizRef.imageContainer.attr("src", quizRef.questions[quizRef.currentQuestion]);
-        }
-        quizRef.currentQuestionAnswered = false;
-        quizRef.track.next();
-    }
-    bGraphics.next = next;
-    ;
-    function arch(event) {
-        console.log("Arch Popup");
-        var quizRef = event.data.quizRef;
-        quizRef.marpro.cta();
-    }
-    bGraphics.arch = arch;
-    function learnMore(event) {
-        var quizRef = event.data.quizRef;
-        console.log(event);
-        quizRef.track.custom("Url direct");
-    }
-    bGraphics.learnMore = learnMore;
-    function remotePost(event) {
-        var quizRef = event.data.quizRef;
-        var remoteUrl = quizRef.options.remotePostUrl;
-        var answerArray = quizRef.answerKeeper;
-        var callback = quizRef.options.remoteCallback ? quizRef.options.remoteCallback : function (data) {
-            console.log(data);
+        acts.prototype.begin = function (event) {
+            console.log("starting quiz");
+            var quizRef = event.data.quizRef;
+            quizRef.imageContainer.attr("usemap", "#" + quizRef.mapElements.question[0].name);
+            quizRef.imageContainer.attr("src", quizRef.questions[0]);
         };
-        jQuery.post(remoteUrl, {
-            answers: answerArray
-        }, callback);
-    }
-    bGraphics.remotePost = remotePost;
+        acts.prototype.answer = function (event) {
+            console.log("answer event");
+            var _a = event.data, shape = _a.shape, coords = _a.coords, value = _a.value, id = _a.id, quizRef = _a.quizRef;
+            quizRef.currentValue = value;
+            console.log("moving selector over coord areas" + coords);
+            var cord = coords.split(",").map(function (x) { return Number(x); });
+            var top, left;
+            if (shape == "circle") {
+                left = (cord[0] - cord[2]) + "px";
+                top = (cord[1] - cord[2]) + "px";
+            }
+            else if (shape == 'rect') {
+                left = cord[0] + "px";
+                top = cord[0] + "px";
+            }
+            quizRef.highlighter.css({
+                top: top,
+                left: left,
+                display: "block"
+            });
+            quizRef.currentQuestionAnswered = true;
+        };
+        ;
+        acts.prototype.swap = function (event) {
+            console.log("swap event");
+            var quizRef = event.data.quizRef;
+        };
+        ;
+        acts.prototype.next = function (event) {
+            console.log("next event");
+            var quizRef = event.data.quizRef;
+            if (!quizRef.currentQuestionAnswered) {
+                alert("You have not yet provided an answer to the current question.");
+                return;
+            }
+            quizRef.highlighter.css({
+                display: "none"
+            });
+            console.log("moving on...");
+            ++quizRef.currentQuestion;
+            quizRef.accumulatedValue += Number(quizRef.currentValue);
+            quizRef.answerKeeper.push(quizRef.currentValue);
+            quizRef.currentValue = null;
+            console.log(quizRef.currentQuestion, quizRef.questionsTotal);
+            if (quizRef.currentQuestion == quizRef.questionsTotal) {
+                quizRef.calculateTotal();
+                return;
+            }
+            else {
+                if (quizRef.questionMaps.length > 0) {
+                    quizRef.imageContainer.attr("usemap", "#" + quizRef.questionMaps[quizRef.currentQuestion + 1]);
+                }
+                quizRef.imageContainer.attr("src", quizRef.questions[quizRef.currentQuestion]);
+            }
+            quizRef.currentQuestionAnswered = false;
+            quizRef.track.next();
+        };
+        ;
+        acts.prototype.arch = function (event) {
+            console.log("Arch Popup");
+            var quizRef = event.data.quizRef;
+            quizRef.marpro.cta();
+        };
+        acts.prototype.learnMore = function (event) {
+            var quizRef = event.data.quizRef;
+            console.log(event);
+            quizRef.track.custom("Url direct");
+        };
+        acts.prototype.remotePost = function (event) {
+            var quizRef = event.data.quizRef;
+            var remoteUrl = quizRef.options.remotePostUrl;
+            var answerArray = quizRef.answerKeeper;
+            var callback = quizRef.options.remoteCallback ? quizRef.options.remoteCallback : function (data) {
+                console.log(data);
+            };
+            jQuery.post(remoteUrl, {
+                answers: answerArray
+            }, callback);
+        };
+        acts.prototype.share = function (event) {
+            var _a = event.data, quizRef = _a.quizRef, share = _a.share;
+            console.log(quizRef);
+            console.log(share);
+            quizRef.sharer.share({
+                "network": share,
+            });
+        };
+        return acts;
+    })();
+    bGraphics.acts = acts;
 })(bGraphics || (bGraphics = {}));
 //# sourceMappingURL=_actions.js.map;/// <reference path="../../typings/index.d.ts"/>
 var bGraphics;
@@ -118,133 +130,151 @@ var bGraphics;
 /// <reference path="../../typings/index.d.ts"/>
 /// <reference path="./_tracking.ts"/>
 /// <reference path="./_arch.ts"/>
+/// <reference path="./_actions.ts"/>
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var bGraphics;
 (function (bGraphics) {
-    bGraphics.accumulatedValue = 0, bGraphics.currentQuestion = 0, bGraphics.currentQuestionAnswered = false, bGraphics.currentValue = null, bGraphics.mapElements = [], bGraphics.answerKeeper = [];
-    function init(options) {
-        var _this = this;
-        try {
-            jQuery(function () { return _this.documentReady(options); });
+    var _bQuiz = (function (_super) {
+        __extends(_bQuiz, _super);
+        function _bQuiz() {
+            _super.call(this);
+            this.accumulatedValue = 0;
+            this.currentQuestion = 0;
+            this.currentQuestionAnswered = false;
+            this.currentValue = null;
+            this.mapElements = [];
+            this.answerKeeper = [];
+            this.questionMaps = [];
         }
-        catch (e) {
-            if (e.message == "jQuery is not defined") {
-                console.warn(e.message + " and is required for bGraphics");
+        _bQuiz.prototype.init = function (options) {
+            var _this = this;
+            try {
+                jQuery(function () { return _this.documentReady(options); });
+            }
+            catch (e) {
+                if (e.message == "jQuery is not defined") {
+                    console.warn(e.message + " and is required for bGraphics");
+                }
+                else {
+                    console.log(e.message);
+                }
+            }
+        };
+        _bQuiz.prototype.documentReady = function (options) {
+            console.log(options);
+            var _a = this.options = options, questions = _a.questions, answers = _a.answers, selector = _a.selector, questionMap = _a.questionMap, startMap = _a.startMap, endMap = _a.endMap, highlighter = _a.highlighter, arch = _a.arch, resultUrls = _a.resultUrls;
+            this.resultUrls = resultUrls;
+            this.questions = new bGraphics.preloader(questions);
+            this.answers = new bGraphics.preloader(answers);
+            this.highlighter = jQuery(highlighter);
+            this.questionsTotal = this.questions.length;
+            this.imageContainer = jQuery(selector);
+            this.setInfo(selector);
+            this.sharer = new bGraphics.sharing();
+            if (arch) {
+                this.marpro = new bGraphics.archForm({
+                    brand: arch.brand,
+                    formId: arch.formId,
+                    feedId: arch.id,
+                });
+            }
+            this.track = new bGraphics.googleAnalyticsTracking({
+                title: this.graphicInformation.title,
+                category: "Interactive Graphic Quiz"
+            });
+            if (startMap) {
+                this.startMap = new bGraphics.map(startMap);
+                this.registerMap(this.startMap, "start");
+            }
+            if (questionMap instanceof Array) {
+                for (var _i = 0; _i < questionMap.length; _i++) {
+                    var qMap = questionMap[_i];
+                    var tMap = new bGraphics.map(qMap);
+                    this.registerMap(tMap, "question");
+                }
             }
             else {
-                console.log(e.message);
+                this.imageMap = new bGraphics.map(questionMap);
+                this.registerMap(this.imageMap, "question");
             }
-        }
-    }
-    bGraphics.init = init;
-    ;
-    function documentReady(options) {
-        console.log(options);
-        var _a = this.options = options, questions = _a.questions, answers = _a.answers, selector = _a.selector, questionMap = _a.questionMap, startMap = _a.startMap, endMap = _a.endMap, highlighter = _a.highlighter, arch = _a.arch;
-        this.questions = new bGraphics.preloader(questions);
-        this.answers = new bGraphics.preloader(answers);
-        this.highlighter = jQuery(highlighter);
-        this.questionsTotal = this.questions.length;
-        this.imageContainer = jQuery(selector);
-        this.setInfo(selector);
-        if (arch) {
-            this.marpro = new bGraphics.archForm({
-                brand: arch.brand,
-                formId: arch.formId,
-                feedId: arch.id,
-            });
-        }
-        this.track = new bGraphics.googleAnalyticsTracking({
-            title: this.graphicInformation.title,
-            category: "Interactive Graphic Quiz"
-        });
-        if (startMap) {
-            this.startMap = new bGraphics.map(startMap);
-            this.registerMap(this.startMap, "start");
-        }
-        if (typeof questionMap == 'Array') {
-            for (var _i = 0; _i < questionMap.length; _i++) {
-                var map_1 = questionMap[_i];
-                var tMap = new map_1(map_1);
-                this.registerMap(tMap, "question");
+            if (endMap) {
+                this.endMap = new bGraphics.map(endMap);
+                this.registerMap(this.endMap, "end");
             }
-        }
-        else {
-            this.imageMap = new bGraphics.map(questionMap);
-            this.registerMap(this.imageMap, "question");
-        }
-        if (endMap) {
-            this.endMap = new bGraphics.map(endMap);
-            this.registerMap(this.endMap, "end");
-        }
-        this.initializeQuiz();
-        console.log(this);
-    }
-    bGraphics.documentReady = documentReady;
-    function registerMap(map, type) {
-        console.log("registering a " + type + " map", map);
-        if (!this.mapElements[type]) {
-            this.mapElements[type] = [];
-        }
-        this.mapElements[type].push(map);
-        console.log(this.mapElements);
-    }
-    bGraphics.registerMap = registerMap;
-    ;
-    function initializeQuiz() {
-        var _this = this;
-        this.imageMap.areas.forEach(function (area) {
-            area.data.quizRef = _this;
-            var action = (function () {
-                return area.data.action;
-            }());
-            console.log(action);
-            jQuery(area.element).click(area.data, _this[area.data.action]);
-        });
-    }
-    bGraphics.initializeQuiz = initializeQuiz;
-    ;
-    function setInfo(img) {
-        var sel = jQuery(img);
-        this.graphicInformation = {
-            "name": sel.attr("alt") || null,
-            "title": sel.attr("title") || null,
-            "selector": img,
-            "originSrc": sel.attr("src"),
-            "height": sel.attr("height") || null,
-            "width": sel.attr("width") || null,
-            "originMap": sel.attr("usemap"),
+            console.log(this);
         };
-        if (!this.graphicInformation.title) {
-            console.warn("Your graphic does not have a title.  Analytics event tracking will be disabled");
-        }
-    }
-    bGraphics.setInfo = setInfo;
-    ;
-    function calculateTotal() {
-        console.log("quiz all done");
-        var res = (this.accumulatedValue / this.questionsTotal);
-        console.log(res);
-        var index = Math.floor(res) - 1;
-        this.resolveAnswer(index);
-    }
-    bGraphics.calculateTotal = calculateTotal;
-    ;
-    function resolveAnswer(index) {
-        if (this.answers[index]) {
-            this.imageContainer.attr("src", this.answers[index]);
-        }
-        else {
-            this.imageContainer.attr("src", this.answers[this.answers.length - 1]);
-        }
-        if (this.endMap) {
-            this.imageContainer.attr("usemap", "#" + this.mapElements["end"][0].name);
-        }
-        this.track.finished();
-    }
-    bGraphics.resolveAnswer = resolveAnswer;
-    ;
+        _bQuiz.prototype.registerMap = function (map, type) {
+            var _this = this;
+            console.log("registering a " + type + " map");
+            if (!this.mapElements[type]) {
+                this.mapElements[type] = [];
+            }
+            this.mapElements[type].push(map);
+            if (map.forQuestions) {
+                map.forQuestions.forEach(function (q) {
+                    _this.questionMaps[q] = map.name;
+                });
+            }
+            this.initializeQuiz(map);
+        };
+        _bQuiz.prototype.initializeQuiz = function (map) {
+            var _this = this;
+            console.log(map);
+            map.areas.forEach(function (area) {
+                area.data.quizRef = _this;
+                var action = (function () {
+                    return area.data.action;
+                }());
+                console.log(area.data.action);
+                jQuery(area.element).click(area.data, _this[area.data.action]);
+            });
+        };
+        _bQuiz.prototype.setInfo = function (img) {
+            var sel = jQuery(img);
+            this.graphicInformation = {
+                "name": sel.attr("alt") || null,
+                "title": sel.attr("title") || null,
+                "selector": img,
+                "originSrc": sel.attr("src"),
+                "height": sel.attr("height") || null,
+                "width": sel.attr("width") || null,
+                "originMap": sel.attr("usemap"),
+            };
+            if (!this.graphicInformation.title) {
+                console.warn("Your graphic does not have a title.  Analytics event tracking will be disabled");
+            }
+        };
+        _bQuiz.prototype.calculateTotal = function () {
+            console.log("quiz all done");
+            var res = (this.accumulatedValue / this.questionsTotal);
+            console.log(res);
+            var index = Math.floor(res) - 1;
+            this.resolveAnswer(index);
+        };
+        _bQuiz.prototype.resolveAnswer = function (index) {
+            if (this.answers[index]) {
+                this.imageContainer.attr("src", this.answers[index]);
+            }
+            else {
+                this.imageContainer.attr("src", this.answers[this.answers.length - 1]);
+            }
+            if (this.endMap) {
+                this.imageContainer.attr("usemap", "#" + this.mapElements["end"][0].name);
+            }
+            if (this.resultUrls.length > 0) {
+                this.sharer.setUrl(this.resultUrls[index]);
+            }
+            this.track.finished();
+        };
+        return _bQuiz;
+    })(bGraphics.acts);
+    bGraphics.bQuiz = new _bQuiz();
 })(bGraphics || (bGraphics = {}));
-//# sourceMappingURL=_bgraphics.js.map;/// <reference path="../../typings/index.d.ts" />
+//# sourceMappingURL=_bquiz.js.map;/// <reference path="../../typings/index.d.ts" />
 var bGraphics;
 (function (bGraphics) {
     var map = (function () {
@@ -260,15 +290,18 @@ var bGraphics;
         map.prototype.buildArea = function (areas) {
             var tmp = areas.map(function (x) {
                 var ref = jQuery(x);
-                return {
+                var tmpObj = {
                     "element": x,
                     "data": {
                         "shape": ref.attr("shape"),
                         "coords": ref.attr("coords"),
-                        "value": ref.attr("data-value"),
-                        "action": ref.attr("data-function")
                     }
                 };
+                var data = ref.data();
+                for (var key in data) {
+                    tmpObj.data[key] = data[key];
+                }
+                return tmpObj;
             });
             return tmp;
         };
@@ -298,6 +331,52 @@ var bGraphics;
     bGraphics.preloader = preloader;
 })(bGraphics || (bGraphics = {}));
 //# sourceMappingURL=_preloader.js.map;var bGraphics;
+(function (bGraphics) {
+    var sharing = (function () {
+        function sharing() {
+            this.currentUrl = window.location.href;
+        }
+        sharing.prototype.freshWindow = function (url) {
+            window.open(url, 'targetWindow', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=500,height=500');
+        };
+        sharing.prototype.share = function (obj) {
+            var network = obj.network;
+            var url = this[network]({
+                "img": obj.img || "",
+                "title": obj.title || ""
+            });
+            this.freshWindow(url);
+        };
+        sharing.prototype.setUrl = function (url) {
+            this.currentUrl = url;
+        };
+        sharing.prototype.facebook = function (obj) {
+            return "http://www.facebook.com/sharer/sharer.php?u=" + this.currentUrl;
+        };
+        sharing.prototype.twitter = function (obj) {
+            return "https://twitter.com/intent/tweet?original_referer=" + this.currentUrl + "&url=" + this.currentUrl;
+        };
+        sharing.prototype.linkedin = function (obj) {
+            return "https://www.linkedin.com/cws/share?url=" + this.currentUrl;
+        };
+        sharing.prototype.googleplus = function (obj) {
+            return "https://plus.google.com/share?url=" + this.currentUrl;
+        };
+        sharing.prototype.pinterest = function (obj) {
+            var img = obj.img ? obj.img : "";
+            var desc = obj.title ? obj.title : "";
+            return "https://pinterest.com/pin/create/bookmarklet/?media=[post-img]&url=[post-url]&description=[post-title]";
+        };
+        sharing.prototype.reddit = function (obj) {
+            return "http://reddit.com/submit?url=[post-url]&title=[post-title]";
+        };
+        sharing.prototype.mail = function (obj) {
+        };
+        return sharing;
+    })();
+    bGraphics.sharing = sharing;
+})(bGraphics || (bGraphics = {}));
+//# sourceMappingURL=_sharing.js.map;var bGraphics;
 (function (bGraphics) {
     var googleAnalyticsTracking = (function () {
         function googleAnalyticsTracking(obj) {

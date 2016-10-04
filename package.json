@@ -1,6 +1,12 @@
 {
-  "name": "Interactive Graphics Generator",
+  "name": "bgraphics-library",
   "version": "0.1.0",
+  "description": "Library for building Brafton interactive graphics",
+  "author": {
+    "name": "Deryk W. King",
+    "email": "deryk.king@brafton.com",
+    "url": "http://derykwking.com"
+  },
   "devDependencies": {
     "grunt": "^1.0.1",
     "grunt-contrib-concat": "^1.0.1",

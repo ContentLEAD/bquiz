@@ -19,15 +19,19 @@ module bGraphics{
         buildArea(areas){
             var tmp = areas.map(x => {
                 let ref = jQuery(x);
-                return {
+                var tmpObj = {
                     "element": x,
                     "data": {
                         "shape": ref.attr("shape"),
                         "coords": ref.attr("coords"),
-                        "value": ref.attr("data-value"),
-                        "action": ref.attr("data-function")
                     }
+                };
+
+                let data = ref.data();
+                for(let key in data){
+                    tmpObj.data[key] = data[key];
                 }
+                return tmpObj;
             });
             
             return tmp;

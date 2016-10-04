@@ -14,15 +14,18 @@ var bGraphics;
         map.prototype.buildArea = function (areas) {
             var tmp = areas.map(function (x) {
                 var ref = jQuery(x);
-                return {
+                var tmpObj = {
                     "element": x,
                     "data": {
                         "shape": ref.attr("shape"),
                         "coords": ref.attr("coords"),
-                        "value": ref.attr("data-value"),
-                        "action": ref.attr("data-function")
                     }
                 };
+                var data = ref.data();
+                for (var key in data) {
+                    tmpObj.data[key] = data[key];
+                }
+                return tmpObj;
             });
             return tmp;
         };

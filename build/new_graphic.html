@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Oncall Traveller Survey</title>
+        <style type="text/css">
+        section.oncall-quiz-section{
+            width:75%;
+            max-width:600px;
+            margin:auto auto;
+            position:relative;
+        }
+        section.oncall-quiz-section img{
+            width:100%;
+            height:auto;
+        }
+        .selected{
+            display:none;
+            position: absolute;
+            background-color: #000;
+            width: 2.5%;
+            height: 2.7%;
+            border-radius: 80px;            
+        }
+        .entry-message {
+            display: none;
+            position: absolute;
+            bottom: 150px;
+            left: 150px;
+            color: red;
+            width: 150px;
+            font-size: 20px;
+            background-color: beige;
+            padding: 15px;
+        }
+        map area {
+            outline: none;
+        }
+    
+        </style>
+        
+    </head>
+    <body>
+        <section class="oncall-quiz-section">
+            <div class="selected"></div>
+            <!--<div class="entry-message">
+                Click anywhere on the graphic to take the survey
+            </div>-->
+            <!--change src to absolute path of the first question gif-->
+            <img src="img/quiz_1_cover-01.jpg" name="a_map" alt="" usemap="#zMap" width="600" height="400" id="interface" class="start">
+            <!--image map for the questions 4 datapoints for the answer selection bubbles 1 datapoint for the next slide-->
+            <map name="zMap">
+                <area shape="rect" coords="370,460,580,520" href="#" alt="" alt="next" data-page="0" data="0">
+            </map>
+            <map name="aMap">
+                <area shape="circle" coords="333,244,5" href="#" alt="" data="1">
+                <area shape="circle" coords="333,288,5" href="#" alt="" data="2">
+                <area shape="circle" coords="333,334,5" href="#" alt="" data="3">
+                <area shape="rect" coords="480,105,590,145" href="#" alt="next" data-page="1" data="0">
+            </map>
+            <map name="bMap">
+                <area shape="circle" coords="333,244,5" href="#" alt="" data="1">
+                <area shape="circle" coords="333,288,5" href="#" alt="" data="2">
+                <area shape="circle" coords="333,379,5" href="#" alt="" data="3">
+                <area shape="rect" coords="480,105,590,145" href="#" alt="next" data-page="3" data="0" id="next-b">
+            </map>
+            <map name="cMap">
+                <area shape="circle" coords="333,244,5" href="#" alt="" data="1">
+                <area shape="circle" coords="333,379,5" href="#" alt="" data="2">
+                <area shape="circle" coords="333,446,5" href="#" alt="" data="3">
+                <area shape="rect" coords="480,105,590,145" href="#" alt="next" data-page="5" data="0" id="next-c">
+            </map>
+            <map name="dMap">
+                <area shape="rect" coords="350,430,580,460" href="http://www.oncallinternational.com/about/contact/" data="0">
+                <area shape="rect" coords="400,490,580,510" href="mailto:contact@oncallinternational.com" data="0">
+            </map>
+            
+        </section>
+        <!--JQuery loaded from the google api cdn--> 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+       
+        <!--quiz.js is the required libarary for this script to function-->
+        <script src="js/quiz.js"></script>
+        <!--initializes the responsive resizing of the image map for mobile site-->
+
+    </body>
+</html>

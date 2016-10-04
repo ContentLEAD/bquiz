@@ -1,9 +1,16 @@
 module bGraphics{
-        export function begin(event){
+     export class acts {
+        constructor(){
+
+        }
+        begin(event){
             console.log("starting quiz");
             var {quizRef} = event.data;
+            quizRef.imageContainer.attr("usemap", "#"+quizRef.mapElements.question[0].name);
+            quizRef.imageContainer.attr("src", quizRef.questions[0]);
         }
-       export function answer(event){
+
+       answer(event){  
             console.log("answer event");
             var {shape, coords, value, id, quizRef} = event.data;
 
@@ -29,12 +36,12 @@ module bGraphics{
             //current question has been answered
             quizRef.currentQuestionAnswered = true;
         };
-        export function swap(event){
+        swap(event){
             console.log("swap event");
             var {quizRef} = event.data;
 
         };
-       export function next(event){
+       next(event){
             console.log("next event");
             var {quizRef} = event.data;
             if(!quizRef.currentQuestionAnswered){
@@ -52,10 +59,13 @@ module bGraphics{
 
             quizRef.currentValue = null;
             console.log(quizRef.currentQuestion, quizRef.questionsTotal);
-            if(quizRef.currentQuestion == quizRef.questionsTotal){
+            if(quizRef.currentQuestion == quizRef.questionsTotal){ //quiz is finished
                 quizRef.calculateTotal();
                 return;
-            }else{
+            }else{ //there are questions left to answer
+                if(quizRef.questionMaps.length > 0){
+                    quizRef.imageContainer.attr("usemap", "#"+quizRef.questionMaps[quizRef.currentQuestion + 1]);
+                }
                 quizRef.imageContainer.attr("src", quizRef.questions[quizRef.currentQuestion]);
 
             }
@@ -65,17 +75,17 @@ module bGraphics{
             quizRef.currentQuestionAnswered = false;
             quizRef.track.next();
         };
-        export function arch(event){
+        arch(event){
             console.log("Arch Popup");
             var {quizRef} = event.data;
             quizRef.marpro.cta();
         }
-        export function learnMore(event){
+        learnMore(event){
             var {quizRef} = event.data;
             console.log(event);
             quizRef.track.custom("Url direct");
         }
-        export function remotePost(event){
+        remotePost(event){
             var {quizRef} = event.data;
             var remoteUrl = quizRef.options.remotePostUrl; //url to send post data to
             var answerArray = quizRef.answerKeeper;
@@ -86,4 +96,14 @@ module bGraphics{
                 answers: answerArray
             },callback)
         } 
+       share(event){
+            var {quizRef, share} = event.data;
+            console.log(quizRef);
+            console.log(share);
+            quizRef.sharer.share({
+                "network": share,
+            });
+
+        }
+    }
 }

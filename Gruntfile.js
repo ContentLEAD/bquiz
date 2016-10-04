@@ -63,7 +63,7 @@ module.exports = function(grunt) {
   // Default task(s).
   grunt.registerTask('livedev', ['serve', 'watch']);
   grunt.registerTask('full', ['typescript','concat','uglify', 'copy']);
-    grunt.registerTask('default', ['typescript','concat','uglify']);
+  grunt.registerTask('default', ['typescript','concat','uglify']);
     
     
 };
